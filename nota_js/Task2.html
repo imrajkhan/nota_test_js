@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Management Table</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <h2>Data Management Table</h2>
+
+    <button id="addEntry">Add New Entry</button>
+
+    <table id="dataTable" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Datetime</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be added dynamically -->
+        </tbody>
+    </table>
+
+    <script>
+        $(document).ready(function(){
+            // Function to add a new row
+            function addRow(id, name, datetime) {
+                var newRow = `<tr data-id="${id}">
+                                <td>${id}</td>
+                                <td><span class="name">${name}</span><input type="text" class="editName" value="${name}" style="display:none;"></td>
+                                <td>${datetime}</td>
+                                <td>
+                                    <button class="editBtn">Edit</button>
+                                    <button class="saveBtn" style="display:none;">Save</button>
+                                    <button class="deleteBtn">Delete</button>
+                                </td>
+                            </tr>`;
+                $('#dataTable tbody').append(newRow);
+            }
+
+            // Mocked initial data
+            var initialData = [
+                { id: 1, name: "John Doe", datetime: "2022-11-01 12:34:56" },
+                { id: 2, name: "Jane Doe", datetime: "2022-11-02 10:45:23" }
+            ];
+
+            // Populate initial data
+            for (var i = 0; i < initialData.length; i++) {
+                addRow(initialData[i].id, initialData[i].name, initialData[i].datetime);
+            }
+
+            // Add New Entry button click event
+            $('#addEntry').click(function(){
+                var newRow = `<tr>
+                                <td></td>
+                                <td><input type="text" class="newName"></td>
+                                <td></td>
+                                <td><button class="sendBtn">Send</button></td>
+                            </tr>`;
+                $('#dataTable tbody').append(newRow);
+            });
+
+            // Send button click event (for adding new entry)
+            $('#dataTable').on('click', '.sendBtn', function(){
+                var newName = $(this).closest('tr').find('.newName').val();
+
+                // Mocked AJAX request
+                var newId = Math.floor(Math.random() * 100) + 3; // Generate a random ID for demonstration
+                var newDatetime = "2022-11-03 09:15:00"; // Mocked datetime
+
+                addRow(newId, newName, newDatetime);
+                $(this).closest('tr').remove(); // Remove the input row
+            });
+
+            // Edit button click event
+            $('#dataTable').on('click', '.editBtn', function(){
+                var row = $(this).closest('tr');
+                row.find('.name').hide();
+                row.find('.editName').show();
+                row.find('.editBtn').hide();
+                row.find('.saveBtn').show();
+            });
+
+            // Save button click event
+            $('#dataTable').on('click', '.saveBtn', function(){
+                var row = $(this).closest('tr');
+                var id = row.data('id');
+                var newName = row.find('.editName').val();
+
+                // Mocked AJAX request (update record on backend)
+                var success = true; // Assume success for demonstration
+
+                if (success) {
+                    row.find('.name').text(newName);
+                    row.find('.name').show();
+                    row.find('.editName').hide();
+                    row.find('.editBtn').show();
+                    row.find('.saveBtn').hide();
+                } else {
+                    alert('Error updating record'); // Show error message
+                }
+            });
+
+            // Delete button click event
+            $('#dataTable').on('click', '.deleteBtn', function(){
+                var row = $(this).closest('tr');
+                var id = row.data('id');
+
+                // Mocked AJAX request (delete record on backend)
+                var success = true; // Assume success for demonstration
+
+                if (success) {
+                    row.remove(); // Remove the row from the table
+                } else {
+                    alert('Error deleting record'); // Show error message
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
